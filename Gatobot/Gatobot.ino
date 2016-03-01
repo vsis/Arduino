@@ -18,6 +18,8 @@ const int IN4 = 7;
 
 const int delayTime = 100;
 
+//if we get noise, we move as the last known motion
+int previousMotion;
 //turn engines to move front
 void moveFront(){
   digitalWrite(IN1, LOW);
@@ -78,15 +80,16 @@ int decideMotion(){
       case 'd':
         nextMotion = motionRight;
         break;
-      //if we get a unexpected command, we stop and turn on the alert led
+      //if we get a unexpected command, we need to execute the last known motion command recived.
       default:
-        nextMotion = motionStopped;
+        nextMotion = previousMotion;
         digitalWrite(tLed, HIGH);
     }
   //if we don't know how to move, we stop
   } else {
     nextMotion = motionStopped;
   }
+  previousMotion = nextMotion;
   return nextMotion;
 }
  
