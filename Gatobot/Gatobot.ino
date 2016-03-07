@@ -6,6 +6,11 @@ const int motionBack = -1;
 const int motionLeft = 2;
 const int motionRight = 3;
 const int motionStopped = 0;
+
+// Special motions / attacks
+const int attackLeft = 4;
+const int attackRight = 5;
+
 int tLed = 13;         //LED
 int btPower = 12;      //Bluetooth power 
 // H bridge pins
@@ -16,7 +21,9 @@ const int IN2 = 5;
 const int IN3 = 6;
 const int IN4 = 7;
 
-const int delayTime = 100;
+const int delayLongLongTime = 500;
+const int delayLongTime = 100;
+const int delaySmallTime = 50;
 
 //if we get noise, we move as the last known motion
 int previousMotion;
@@ -80,6 +87,12 @@ int decideMotion(){
       case 'd':
         nextMotion = motionRight;
         break;
+      case 'A':
+        nextMotion = attackLeft;
+        break;
+      case 'D':
+        nextMotion = attackRight;
+        break;
       //if we get a unexpected command, we need to execute the last known motion command recived.
       default:
         nextMotion = previousMotion;
@@ -98,18 +111,31 @@ void executeMotion (int nextMotion){
   switch (nextMotion){
     case motionFront:
       moveFront();
+      delay(delayLongTime);
       break;
     case motionLeft:
       moveLeft();
+      delay(delaySmallTime);
       break;
     case motionRight:
       moveRight();
+      delay(delaySmallTime);
       break;
     case motionBack:
       moveBack();
+      delay(delayLongTime);
+      break;
+    case attackLeft:
+      moveLeft();
+      delay(delayLongLongTime);
+      break;
+    case attackRight:
+      moveRight();
+      delay(delayLongLongTime);
       break;
     default:
       stopMotors();
+      delay(delayLongTime);
   }
 }
 
@@ -138,5 +164,4 @@ void loop() {
   int nextMotion;
   nextMotion = decideMotion();
   executeMotion(nextMotion);
-  delay(delayTime);
 }
